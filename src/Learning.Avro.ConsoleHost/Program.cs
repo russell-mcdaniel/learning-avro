@@ -12,7 +12,41 @@ namespace Learning.Avro.ConsoleHost
     {
         private static void Main()
         {
+            RunTestForDateTimeOffset();
             RunTestForRecord();
+        }
+
+        private static void RunTestForDateTimeOffset()
+        {
+            /*
+            var dtoIn = DateTimeOffset.Now;
+            var dtoStr = dtoIn.ToString("O");
+            var dtoOut = DateTimeOffset.Parse(dtoStr);
+ 
+            var dtl = DateTime.Now;
+            var dtoFromLocal = new DateTimeOffset(dtl);
+
+            var dtu = DateTime.UtcNow;
+            var dtoFromUtc = new DateTimeOffset(dtu);
+            
+            // dtoFromLocal != dtoFromUtc
+            */
+
+            var schema = new StringSchema();
+
+            var serializer = new BinarySerializerBuilder()
+                .BuildSerializer<DateTimeOffset>(schema);
+
+            var deserializer = new BinaryDeserializerBuilder()
+                .BuildDeserializer<DateTimeOffset>(schema);
+
+            var dtoIn = DateTimeOffset.Now;
+            var bytes = serializer.Serialize(dtoIn);
+            var dtoOut = deserializer.Deserialize(bytes);
+
+            Console.WriteLine();
+            Console.WriteLine($"Serialized:    {dtoIn.ToString("O")}");
+            Console.WriteLine($"Deserialized:  {dtoOut.ToString("O")}");
         }
 
         private static void RunTestForRecord()
@@ -25,6 +59,12 @@ namespace Learning.Avro.ConsoleHost
                 schema = reader.Read(stream);
             }
 
+            var serializer = new BinarySerializerBuilder()
+                .BuildSerializer<Widget>(schema);
+
+            var deserializer = new BinaryDeserializerBuilder()
+                .BuildDeserializer<Widget>(schema);
+
             var widgetIn = new Widget
             {
                 Id = 1010,
@@ -33,21 +73,14 @@ namespace Learning.Avro.ConsoleHost
                 Lifetime = TimeSpan.FromMilliseconds(987654321),
                 GlobalId = new Guid("21d45c13-76b1-459d-8571-ba0ad0fa27de"),
                 CreatedAt = DateTime.UtcNow,
-                CreatedAtLocal = DateTimeOffset.Now
+                CreatedAtLocal = new DateTimeOffset(DateTime.Now)
             };
 
-            var serializer = new BinarySerializerBuilder()
-                .BuildSerializer<Widget>(schema);
-
             var bytes = serializer.Serialize(widgetIn);
-
-            Console.WriteLine($"Serialized widget to {bytes.Length} bytes.");
-
-            var deserializer = new BinaryDeserializerBuilder()
-                .BuildDeserializer<Widget>(schema);
-
             var widgetOut = deserializer.Deserialize(bytes);
 
+            Console.WriteLine();
+            Console.WriteLine($"Serialized widget to {bytes.Length} bytes.");
             Console.WriteLine($"Deserialized widget {widgetOut.Id} (\"{widgetOut.Name}\").");
         }
     }
