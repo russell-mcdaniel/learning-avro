@@ -12,10 +12,10 @@ namespace Learning.Avro.ConsoleHost
     {
         private static void Main()
         {
-            RunTestForSimpleCase();
+            RunTestForRecord();
         }
 
-        private static void RunTestForSimpleCase()
+        private static void RunTestForRecord()
         {
             Schema schema;
 

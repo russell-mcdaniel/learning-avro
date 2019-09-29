@@ -13,10 +13,12 @@
     },
     {
       "name": "Cost",
-      "type": "bytes",
-      "logicalType": "decimal",
-      "precision": 29,
-      "scale": 14
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 29,
+        "scale": 14
+      }
     },
     {
       "name": "Lifetime",
@@ -24,8 +26,10 @@
     },
     {
       "name": "GlobalId",
-      "type": "bytes",
-      "logicalType": "uuid"
+      "type": {
+        "type": "bytes",
+        "logicalType": "uuid"
+      }
     },
     {
       "name": "CreatedAt",
