@@ -22,14 +22,14 @@ namespace Learning.Avro.ConsoleHost
             var dtoIn = DateTimeOffset.Now;
             var dtoStr = dtoIn.ToString("O");
             var dtoOut = DateTimeOffset.Parse(dtoStr);
- 
-            var dtl = DateTime.Now;
-            var dtoFromLocal = new DateTimeOffset(dtl);
 
-            var dtu = DateTime.UtcNow;
-            var dtoFromUtc = new DateTimeOffset(dtu);
-            
-            // dtoFromLocal != dtoFromUtc
+            var loc = DateTime.Now;
+            var utc = loc.ToUniversalTime();
+
+            var dtoFromLocal = new DateTimeOffset(loc);
+            var dtoFromUtc = new DateTimeOffset(utc);
+
+            Console.WriteLine((dtoFromUtc == dtoFromLocal) ? "==" : "!=");
             */
 
             var schema = new StringSchema();
@@ -73,7 +73,7 @@ namespace Learning.Avro.ConsoleHost
                 Lifetime = TimeSpan.FromMilliseconds(987654321),
                 GlobalId = new Guid("21d45c13-76b1-459d-8571-ba0ad0fa27de"),
                 CreatedAt = DateTime.UtcNow,
-                CreatedAtLocal = new DateTimeOffset(DateTime.Now)
+                CreatedAtLocal = DateTimeOffset.Now
             };
 
             var bytes = serializer.Serialize(widgetIn);
