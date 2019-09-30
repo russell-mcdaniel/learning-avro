@@ -16,33 +16,32 @@ Issues
 Open
 --------------------------------------------------------------------------------
 
-*** DateTimeOffset loses its offset value.
+*** DateTimeOffset is always deserialized with a UTC time.
 
-Using string serialization as recommended, the DateTimeOffset loses its offset
-value. Upon tracing through the DateTimeOffsetValues test in the string tests,
-it looks like the library attempts to treat DateTime and DateTimeOffets as
-equivalent when they are not.
+On serialization, the library uses the UtcDateTime property of the offset. Upon
+deserialization, this results in a DateTimeOffset set to the UTC time with an
+offset value of zero.
 
-On serialization, the library uses the UtcDateTime property of the offset for
-its value which is a DateTime value with no notion of offset. Even if this
-were deserialized properly into a DateTimeOffset, the offset would be wrong
-if it was deserialized on a host configured for a different time zone than
-where the data was captured because it would calculate the offset based on
-the time zone of the local host instead of the originating host.
-
-The Chr.Avro unit tests pass because they create DateTimeOffsets from
-DateTime values instead of creating DateTimeOffsets natively.
+Serialization should respect the original DateTime Kind of the DateTimeOffset
+and express it with the original offset from UTC, if applicable. It can do this
+by separating treatment of DateTimeOffsets from DateTimes.
 
 Test 1: Direct String Conversion
 
 * Using DateTimeOffet.ToString("O") and then DateTimeOff.Parse()
-  yields the expected result: The offset value is preserved.
+  yields the expected result: The local time remains the base time
+  and the original offset value is preserved.
 
-Test 2: DateTimeOffset Schema
+Test 2: Avro String Schema
 
-* Serializing and deserializing a DateTimeOffset value with an
-  Avro schema for a single DateTimeOffset value yields a DateTimeOffset
-  with the correct local time, but 
+* Serializing and deserializing a local DateTimeOffset value yields
+  a DateTimeOffset based on the UTC time and a zero offset value.
+
+* The unit test passes because the original and deserialized values
+  represent the same point in time even though they are not rendered
+  in the same way. See:
+
+  https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset.op_equality
 
 Reference:
 
@@ -65,23 +64,23 @@ instead of just using the value of the DateTimeOffset itself.
 
 This behavior can be effectively be demonstrated with the following code:
 
-  var dtl = DateTime.Now;
-  var dtoFromLocal = new DateTimeOffset(dtl);
+  var loc = DateTime.Now;
+  var utc = loc.ToUniversalTime();
 
-  var dtu = DateTime.UtcNow;
-  var dtoFromUtc = new DateTimeOffset(dtu);
+  var dtoFromLocal = new DateTimeOffset(loc);
+  var dtoFromUtc = new DateTimeOffset(utc);
 
-Note that the local and UTC properties are correct in both cases, but in the
-latter case, the offset value is 00:00. An equality check shows that these
-values are not considered equal. Contrast with the passing Chr.Avro tests.
+Note that the local and UTC times are the same in both cases, but in the
+latter case, the base DateTime value uses the UTC time and the offset value
+is set to 00:00.
 
 This raises another question about how DateTimeOffset works. If the local and
 UTC times are different, how can the offset be 00:00?
 
 Reference:
 
-* https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset?view=netcore-3.0
-* https://docs.microsoft.com/en-us/dotnet/standard/datetime/instantiating-a-datetimeoffset-object?view=netcore-3.0
+* https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset
+* https://docs.microsoft.com/en-us/dotnet/standard/datetime/instantiating-a-datetimeoffset-object
 
 --------------------------------------------------------------------------------
 Closed
