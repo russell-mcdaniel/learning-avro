@@ -93,13 +93,13 @@ namespace Learning.Avro.ConsoleHost
 
             var widgetAddSchema = GetSchema("WidgetAdd");
             var widgetAddSerializer = new BinarySerializerBuilder().BuildSerializer<WidgetAdd>(widgetAddSchema);
-            var widgetAddDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<WidgetAdd>(widgetAddSchema);
+            //var widgetAddDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<WidgetAdd>(widgetAddSchema);
+            var widgetAddDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<WidgetAdd>(widgetSchema);
 
             var widgetPrimeSchema = GetSchema("WidgetPrime");
             var widgetPrimeSerializer = new BinarySerializerBuilder().BuildSerializer<WidgetPrime>(widgetPrimeSchema);
             var widgetPrimeDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<WidgetPrime>(widgetPrimeSchema);
 
-            /*
             // Deserialize a widget add from a widget.
             var widgetIn = new Widget
             {
@@ -118,7 +118,6 @@ namespace Learning.Avro.ConsoleHost
             Console.WriteLine();
             Console.WriteLine($"Serialized widget to {widgetBytes.Length} bytes.");
             Console.WriteLine($"Deserialized widget add {widgetAddOut.Id} (\"{widgetAddOut.Name}\").");
-            */
 
             // Deserialize a widget from a widget add.
             var widgetAddIn = new WidgetAdd

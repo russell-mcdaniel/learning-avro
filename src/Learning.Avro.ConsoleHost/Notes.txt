@@ -40,9 +40,15 @@ Deserializing a WidgetAdd from a serialized Widget results in:
 Deserializing a Widget from a WidgetAdd *does* work. So forward compatibility
 works in this simple case, but backward compatibility does not. Why?
 
-Further test scenarios:
+The "Getting Started (Java)" article in the documentation yielded a potential
+clue: Try declaring the deserializer for the target object version with the
+schema from the source object version.
 
-* What if the field is added in the middle of the schema?
+* This works. However, this seems like it is not a particularly dynamic
+  solution. Explicit logic is required to detect and select the deserializer
+  with the correct source schema for each message. Is this how this is
+  intended to work (versus the deserialization engine just works it out 
+  via inherent schema compatibility semantics)?
 
 *** DateTimeOffset is always deserialized with a UTC time.
 
