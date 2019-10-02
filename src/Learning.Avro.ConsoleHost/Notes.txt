@@ -16,6 +16,34 @@ Issues
 Open
 --------------------------------------------------------------------------------
 
+*** Compatibility testing.
+
+The first iteration failed with an error during deserialization:
+
+  "Value was either too large or too small for a Decimal."
+
+This occurred for both cases:
+
+* Widget -> WidgetPrime
+* WidgetPrime -> Widget
+
+It is unclear why this is happening. The WidgetPrime has multiple changes
+which make it difficult to isolate the cause.
+
+The second iteration introduces WidgetAdd which only adds a single field
+to the end of the Widget schema.
+
+Deserializing a WidgetAdd from a serialized Widget results in:
+
+  "Encoded integer exceeds long bounds."
+
+Deserializing a Widget from a WidgetAdd *does* work. So forward compatibility
+works in this simple case, but backward compatibility does not. Why?
+
+Further test scenarios:
+
+* What if the field is added in the middle of the schema?
+
 *** DateTimeOffset is always deserialized with a UTC time.
 
 On serialization, the library uses the UtcDateTime property of the offset. Upon

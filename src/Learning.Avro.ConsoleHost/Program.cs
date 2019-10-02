@@ -91,10 +91,56 @@ namespace Learning.Avro.ConsoleHost
             var widgetSerializer = new BinarySerializerBuilder().BuildSerializer<Widget>(widgetSchema);
             var widgetDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<Widget>(widgetSchema);
 
+            var widgetAddSchema = GetSchema("WidgetAdd");
+            var widgetAddSerializer = new BinarySerializerBuilder().BuildSerializer<WidgetAdd>(widgetAddSchema);
+            var widgetAddDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<WidgetAdd>(widgetAddSchema);
+
             var widgetPrimeSchema = GetSchema("WidgetPrime");
             var widgetPrimeSerializer = new BinarySerializerBuilder().BuildSerializer<WidgetPrime>(widgetPrimeSchema);
             var widgetPrimeDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<WidgetPrime>(widgetPrimeSchema);
 
+            /*
+            // Deserialize a widget add from a widget.
+            var widgetIn = new Widget
+            {
+                Id = 1010,
+                Name = "One Thousand Ten",
+                Cost = 3829.7401m,
+                Lifetime = TimeSpan.FromMilliseconds(987654321),
+                GlobalId = new Guid("21d45c13-76b1-459d-8571-ba0ad0fa27de"),
+                CreatedAt = DateTime.UtcNow,
+                CreatedAtLocal = DateTimeOffset.Now
+            };
+
+            var widgetBytes = widgetSerializer.Serialize(widgetIn);
+            var widgetAddOut = widgetAddDeserializer.Deserialize(widgetBytes);
+
+            Console.WriteLine();
+            Console.WriteLine($"Serialized widget to {widgetBytes.Length} bytes.");
+            Console.WriteLine($"Deserialized widget add {widgetAddOut.Id} (\"{widgetAddOut.Name}\").");
+            */
+
+            // Deserialize a widget from a widget add.
+            var widgetAddIn = new WidgetAdd
+            {
+                Id = 2020,
+                Name = "Two Thousand Twenty",
+                Cost = 7429.3801m,
+                Lifetime = TimeSpan.FromMilliseconds(86429751),
+                GlobalId = new Guid("ebb3e711-90bc-469b-b8e8-4f0c6c1e34f2"),
+                CreatedAt = DateTime.UtcNow,
+                CreatedAtLocal = DateTimeOffset.Now,
+                SufferingIndex = 666
+            };
+
+            var widgetAddBytes = widgetAddSerializer.Serialize(widgetAddIn);
+            var widgetOut = widgetDeserializer.Deserialize(widgetAddBytes);
+
+            Console.WriteLine();
+            Console.WriteLine($"Serialized widget add to {widgetAddBytes.Length} bytes.");
+            Console.WriteLine($"Deserialized widget {widgetOut.Id} (\"{widgetOut.Name}\").");
+
+            /*
             // Deserialize a widget prime from a widget.
             var widgetIn = new Widget
             {
@@ -117,8 +163,8 @@ namespace Learning.Avro.ConsoleHost
             // Deserialize a widget from a widget prime.
             var widgetPrimeIn = new WidgetPrime
             {
-                Id = 2020,
-                Name = "Two Thousand Twenty",
+                Id = 3030,
+                Name = "Three Thousand Thirty",
                 Description = "This is a brief description of the premium widget model.",
                 Cost = 7401.3829m,
                 GlobalId = new Guid("8cb8db7f-c790-4872-a905-86dd3e04d787"),
@@ -133,6 +179,7 @@ namespace Learning.Avro.ConsoleHost
             Console.WriteLine();
             Console.WriteLine($"Serialized widget prime to {widgetPrimeBytes.Length} bytes.");
             Console.WriteLine($"Deserialized widget {widgetOut.Id} (\"{widgetOut.Name}\").");
+            */
         }
 
         private static Schema GetSchema(string name)
