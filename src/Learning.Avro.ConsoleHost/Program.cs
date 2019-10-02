@@ -14,6 +14,7 @@ namespace Learning.Avro.ConsoleHost
         {
             RunTestForDateTimeOffset();
             RunTestForRecord();
+            RunTestForSchemaCompatibility();
         }
 
         private static void RunTestForDateTimeOffset()
@@ -82,6 +83,69 @@ namespace Learning.Avro.ConsoleHost
             Console.WriteLine();
             Console.WriteLine($"Serialized widget to {bytes.Length} bytes.");
             Console.WriteLine($"Deserialized widget {widgetOut.Id} (\"{widgetOut.Name}\").");
+        }
+
+        private static void RunTestForSchemaCompatibility()
+        {
+            var widgetSchema = GetSchema("Widget");
+            var widgetSerializer = new BinarySerializerBuilder().BuildSerializer<Widget>(widgetSchema);
+            var widgetDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<Widget>(widgetSchema);
+
+            var widgetPrimeSchema = GetSchema("WidgetPrime");
+            var widgetPrimeSerializer = new BinarySerializerBuilder().BuildSerializer<WidgetPrime>(widgetPrimeSchema);
+            var widgetPrimeDeserializer = new BinaryDeserializerBuilder().BuildDeserializer<WidgetPrime>(widgetPrimeSchema);
+
+            // Deserialize a widget prime from a widget.
+            var widgetIn = new Widget
+            {
+                Id = 1010,
+                Name = "One Thousand Ten",
+                Cost = 3829.7401m,
+                Lifetime = TimeSpan.FromMilliseconds(987654321),
+                GlobalId = new Guid("21d45c13-76b1-459d-8571-ba0ad0fa27de"),
+                CreatedAt = DateTime.UtcNow,
+                CreatedAtLocal = DateTimeOffset.Now
+            };
+
+            var widgetBytes = widgetSerializer.Serialize(widgetIn);
+            var widgetPrimeOut = widgetPrimeDeserializer.Deserialize(widgetBytes);
+
+            Console.WriteLine();
+            Console.WriteLine($"Serialized widget to {widgetBytes.Length} bytes.");
+            Console.WriteLine($"Deserialized widget prime {widgetPrimeOut.Id} (\"{widgetPrimeOut.Name}\").");
+
+            // Deserialize a widget from a widget prime.
+            var widgetPrimeIn = new WidgetPrime
+            {
+                Id = 2020,
+                Name = "Two Thousand Twenty",
+                Description = "This is a brief description of the premium widget model.",
+                Cost = 7401.3829m,
+                GlobalId = new Guid("8cb8db7f-c790-4872-a905-86dd3e04d787"),
+                CreatedAt = DateTime.UtcNow,
+                CreatedAtLocal = DateTimeOffset.Now,
+                ShelfLife = TimeSpan.FromMilliseconds(123456789)
+            };
+
+            var widgetPrimeBytes = widgetPrimeSerializer.Serialize(widgetPrimeIn);
+            var widgetOut = widgetDeserializer.Deserialize(widgetPrimeBytes);
+
+            Console.WriteLine();
+            Console.WriteLine($"Serialized widget prime to {widgetPrimeBytes.Length} bytes.");
+            Console.WriteLine($"Deserialized widget {widgetOut.Id} (\"{widgetOut.Name}\").");
+        }
+
+        private static Schema GetSchema(string name)
+        {
+            Schema schema;
+
+            using (var stream = new FileStream($"./Schemas/{name}.avsc", FileMode.Open))
+            {
+                var reader = new JsonSchemaReader();
+                schema = reader.Read(stream);
+            }
+
+            return schema;
         }
     }
 }
