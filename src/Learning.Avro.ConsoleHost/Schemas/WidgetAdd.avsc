@@ -1,0 +1,47 @@
+﻿{
+  "namespace": "learning.avro",
+  "type": "record",
+  "name": "WidgetAdd",
+  "fields": [
+    {
+      "name": "Id",
+      "type": "int"
+    },
+    {
+      "name": "Name",
+      "type": "string"
+    },
+    {
+      "name": "Cost",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 29,
+        "scale": 14
+      }
+    },
+    {
+      "name": "Lifetime",
+      "type": "string"
+    },
+    {
+      "name": "GlobalId",
+      "type": {
+        "type": "bytes",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "CreatedAt",
+      "type": "string"
+    },
+    {
+      "name": "CreatedAtLocal",
+      "type": "string"
+    },
+    {
+      "name": "SufferingIndex",
+      "type": "long"
+    }
+  ]
+}

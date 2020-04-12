@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Schemas\WidgetAdd.avsc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Schemas\WidgetPrime.avsc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Schemas\Widget.avsc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
