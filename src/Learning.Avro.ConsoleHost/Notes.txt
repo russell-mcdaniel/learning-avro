@@ -111,6 +111,11 @@ is set to 00:00.
 This raises another question about how DateTimeOffset works. If the local and
 UTC times are different, how can the offset be 00:00?
 
+The serialization issue is documented and resolved by this bug and PR:
+
+* https://github.com/ch-robinson/dotnet-avro/issues/29
+* https://github.com/ch-robinson/dotnet-avro/pull/36
+
 Reference:
 
 * https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset
